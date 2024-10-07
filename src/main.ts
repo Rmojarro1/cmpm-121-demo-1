@@ -14,11 +14,11 @@ const button: HTMLButtonElement = document.createElement("button");
 button.textContent = "🍆";
 document.body.appendChild(button);
 
-let buttonCounter: number = 0; 
+let buttonCounter: number = 0;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-button.addEventListener('click', (event:MouseEvent) => {
-    buttonCounter++; 
-    console.log("Button clciked: " + buttonCounter+ '\n');
-    button.textContent = ("🍆 clicked " + buttonCounter + " times\n"); 
-}); 
+button.addEventListener("click", () => {
+  buttonCounter++;
+  console.log("Button clciked: " + buttonCounter + "\n");
+  button.textContent = "🍆 clicked " + buttonCounter + " times\n";
+});
