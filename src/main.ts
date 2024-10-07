@@ -16,9 +16,18 @@ document.body.appendChild(button);
 
 let buttonCounter: number = 0;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function updateCounter(count: number, button: HTMLButtonElement): number{
+    count++; 
+    button.textContent = "🍆 clicked " + count + " times\n";
+    return count; 
+}
+
 button.addEventListener("click", () => {
-  buttonCounter++;
-  console.log("Button clciked: " + buttonCounter + "\n");
-  button.textContent = "🍆 clicked " + buttonCounter + " times\n";
+  buttonCounter = updateCounter(buttonCounter, button); 
 });
+
+setInterval(() => {
+    buttonCounter = updateCounter(buttonCounter, button); 
+}, 1000); 
+
+
