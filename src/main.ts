@@ -14,18 +14,61 @@ const button: HTMLButtonElement = document.createElement("button");
 button.textContent = "🍆";
 document.body.appendChild(button);
 
-let buttonCounter: number = 0;
+const upgradeButton: HTMLButtonElement = document.createElement("button"); 
+upgradeButton.textContent = "Auto clicker = 10 🍆 ";
+upgradeButton.disabled = true;   
+document.body.appendChild(upgradeButton); 
 
-function updateCounter(count: number, button: HTMLButtonElement): number {
-  count++;
-  button.textContent = "🍆 clicked " + count + " times\n";
+let buttonCounter: number = 0;
+let upgrades: number = 0; 
+
+function updateCounter(
+  count: number,
+  value: number,
+  button: HTMLButtonElement,
+): number {
+  count += value;
+  button.textContent = "🍆 clicked " + count.toFixed(2) + " times\n";
+  upgradeButton.disabled = !canUpgrade(buttonCounter); 
   return count;
 }
 
+function canUpgrade(count: number): boolean {
+  return count >= 10; 
+}
+
+let startTime: number = performance.now();
+
+function frameUpdate(): void {
+    if(upgrades > 0){
+      console.log("We should be updating"); 
+      buttonCounter = updateCounter(
+      buttonCounter,
+      ((performance.now() - startTime) / 1000) * upgrades,
+      button,
+    );
+    startTime = performance.now();
+    upgradeButton.disabled = !canUpgrade(buttonCounter);
+    requestAnimationFrame(frameUpdate);
+  }
+}
+
 button.addEventListener("click", () => {
-  buttonCounter = updateCounter(buttonCounter, button);
+  buttonCounter = updateCounter(buttonCounter, 1, button);
+  upgradeButton.disabled = !canUpgrade(buttonCounter);
 });
 
-setInterval(() => {
-  buttonCounter = updateCounter(buttonCounter, button);
-}, 1000);
+
+upgradeButton.addEventListener("click", () => {
+  if(buttonCounter >= 10){
+    buttonCounter = updateCounter(buttonCounter, -10, button);  
+    upgrades++; 
+    console.log("Upgrades: " + upgrades); 
+    upgradeButton.disabled = !canUpgrade(buttonCounter);
+    if (upgrades === 1) {
+      requestAnimationFrame(frameUpdate);
+    }
+  }
+})
+
+requestAnimationFrame(frameUpdate);
