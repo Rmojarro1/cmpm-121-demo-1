@@ -16,18 +16,16 @@ document.body.appendChild(button);
 
 let buttonCounter: number = 0;
 
-function updateCounter(count: number, button: HTMLButtonElement): number{
-    count++; 
-    button.textContent = "🍆 clicked " + count + " times\n";
-    return count; 
+function updateCounter(count: number, button: HTMLButtonElement): number {
+  count++;
+  button.textContent = "🍆 clicked " + count + " times\n";
+  return count;
 }
 
 button.addEventListener("click", () => {
-  buttonCounter = updateCounter(buttonCounter, button); 
+  buttonCounter = updateCounter(buttonCounter, button);
 });
 
 setInterval(() => {
-    buttonCounter = updateCounter(buttonCounter, button); 
-}, 1000); 
-
-
+  buttonCounter = updateCounter(buttonCounter, button);
+}, 1000);
