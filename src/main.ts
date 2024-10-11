@@ -9,179 +9,103 @@ document.title = gameName;
 const header = document.createElement("h1");
 header.innerHTML = gameName;
 app.append(header);
+interface Item {
+  name: string;
+  cost: number;
+  rate: number;
+}
 
-const button: HTMLButtonElement = document.createElement("button");
-button.textContent = "🍆";
-app.appendChild(button);
-//document.body.appendChild(button);
-
-const upgradeButtonA: HTMLButtonElement = document.createElement("button");
-upgradeButtonA.textContent = "Part-timer = 10 🍆 ";
-upgradeButtonA.disabled = true;
-app.appendChild(upgradeButtonA);
-
-const upgradeButtonB: HTMLButtonElement = document.createElement("button");
-upgradeButtonB.textContent = "Friendly neighbor = 100 🍆 ";
-upgradeButtonB.disabled = true;
-app.appendChild(upgradeButtonB);
-
-const upgradeButtonC: HTMLButtonElement = document.createElement("button");
-upgradeButtonC.textContent = "Full-time employee = 1000 🍆 ";
-upgradeButtonC.disabled = true;
-app.appendChild(upgradeButtonC);
+const availableItems: Item[] = [
+  { name: "Part-timer", cost: 10, rate: 0.1 },
+  { name: "Friendly Neighbor", cost: 100, rate: 2 },
+  { name: "Harvesting Robot", cost: 1000, rate: 50 },
+];
 
 let counter: number = 0;
-let upgradeA: number = 0;
-let upgradeB: number = 0;
-let upgradeC: number = 0;
+// eslint-disable-next-line prefer-const
+let upgrades: number[] = Array(availableItems.length).fill(0);
+// eslint-disable-next-line prefer-const
+let prices: number[] = availableItems.map(item => item.cost);
+let startTime: number = performance.now();
 
-let priceA = 10;
-let priceB = 100;
-let priceC = 1000;
-
-const playerCount = document.createElement("total");
-playerCount.textContent = "You have " + counter + "🍆s";
+const playerCount = document.createElement("div");
+playerCount.textContent = `${counter} 🍆s harvested`;
 document.body.appendChild(playerCount);
 
-const growthRate = document.createElement("gr");
-growthRate.textContent =
-  "Current harvest rate: " + (0.1 * upgradeA + 2 * upgradeB);
+const growthRate = document.createElement("div");
+growthRate.textContent = "Current harvest rate: 0";
 app.appendChild(growthRate);
 
-const upgradeAText = document.createElement("upA");
-upgradeAText.textContent = "Part-timers: " + upgradeA;
-app.appendChild(upgradeAText);
+const buttons: HTMLButtonElement[] = availableItems.map((item, index) => {
+  const button = document.createElement("button");
+  button.textContent = `${item.name} = ${item.cost} 🍆`;
+  button.disabled = true;
+  app.appendChild(button);
+  button.addEventListener("click", () => {
+    if (counter >= prices[index]) {
+      counter = updateCounter(counter, -item.cost, playerCount);
+      upgrades[index]++;
+      prices[index] = updatePrice(prices[index]);
+      updateText();
+      updateButtons();
+      if (upgrades[index] === 1) {
+        startTime = performance.now();
+        requestAnimationFrame(frameUpdate);
+      }
+    }
+  });
+  return button;
+});
 
-const upgradeBText = document.createElement("upB");
-upgradeBText.textContent = "Friendly neighbors: " + upgradeB;
-app.appendChild(upgradeBText);
-
-const upgradeCText = document.createElement("upC");
-upgradeCText.textContent = "Harvesting robots: " + upgradeC;
-app.appendChild(upgradeCText);
-
-function updateCounter(
-  count: number,
-  value: number,
-  button: HTMLElement,
-): number {
-  count += value;
-  button.textContent = count.toFixed(2) + "🍆s harvested";
-  updateButtons();
-  return count;
+function updateCounter(counter: number, value: number, playerCount: HTMLElement): number {
+  counter += value;
+  playerCount.textContent = `You have ${counter.toFixed(2)} 🍆s`;
+  return counter;
 }
 
 function updatePrice(price: number): number {
   return price * 1.15;
 }
 
-/*function updateUpgrade(upgrade: number, price: number): void {
-
-}*/
-
 function updateButtons(): void {
-  upgradeButtonA.disabled = !hasUpgradeA(counter);
-  upgradeButtonB.disabled = !hasUpgradeB(counter);
-  upgradeButtonC.disabled = !hasUpgradeC(counter);
-  upgradeButtonA.textContent = "Part-timer = " + priceA.toFixed(2) + " 🍆 ";
-  upgradeButtonB.textContent = "Friendly neighbors = " + priceB.toFixed(2) + " 🍆 ";
-  upgradeButtonC.textContent = "Harvesting robots = " + priceC.toFixed(2) + " 🍆 ";
-}
-
-function hasUpgradeA(count: number): boolean {
-  return count >= priceA;
-}
-
-function hasUpgradeB(count: number): boolean {
-  return count >= priceB;
-}
-
-function hasUpgradeC(count: number): boolean {
-  return count >= priceC;
+  buttons.forEach((button, index) => {
+    button.disabled = counter < prices[index];
+    button.textContent = `${availableItems[index].name} = ${prices[index].toFixed(2)} 🍆`;
+  });
 }
 
 function updateText(): void {
-  growthRate.textContent =
-    "Current harvest rate: " +
-    (0.1 * upgradeA + 2 * upgradeB + 50 * upgradeC).toFixed(2);
-  upgradeAText.textContent = "Part-timers: " + upgradeA;
-  upgradeBText.textContent = "Friendly neighbors: " + upgradeB;
-  upgradeCText.textContent = "Harvesting robots: " + upgradeC;
+  const totalRate = upgrades.reduce((sum, upgradeCount, index) => 
+    sum + upgradeCount * availableItems[index].rate, 0);
+  growthRate.textContent = `Current harvest rate: ${totalRate.toFixed(2)}`;
 }
-
-let startTime: number = performance.now();
 
 function frameUpdate(): void {
-  if (upgradeA > 0 || upgradeB > 0 || upgradeC > 0) {
+  if (upgrades.some(upgrade => upgrade > 0)) {
     const currentTime = performance.now();
     const elapsedTime = (currentTime - startTime) / 1000;
+    
+    upgrades.forEach((upgradeCount, index) => {
+      if (upgradeCount > 0) {
+        const increment = upgradeCount * availableItems[index].rate * elapsedTime;
+        counter = updateCounter(counter, increment, playerCount);
+      }
+    });
 
-    if (upgradeA > 0) {
-      const incrementA = upgradeA * 0.1 * elapsedTime;
-      counter = updateCounter(counter, incrementA, playerCount);
-    }
-
-    if (upgradeB > 0) {
-      const incrementB = upgradeB * 2 * elapsedTime;
-      counter = updateCounter(counter, incrementB, playerCount);
-    }
-
-    if (upgradeC > 0) {
-      const incrementC = upgradeC * 50 * elapsedTime;
-      counter = updateCounter(counter, incrementC, playerCount);
-    }
-    console.log(counter);
     startTime = currentTime;
-    updateButtons();
     requestAnimationFrame(frameUpdate);
+    updateButtons();
   }
 }
+
+const button = document.createElement("button");
+button.textContent = "🍆";
+app.appendChild(button);
 
 button.addEventListener("click", () => {
   counter = updateCounter(counter, 1, playerCount);
   updateButtons();
 });
 
-upgradeButtonA.addEventListener("click", () => {
-  if (counter >= priceA) {
-    counter = updateCounter(counter, -10, playerCount);
-    upgradeA++;
-    priceA = updatePrice(priceA);
-    updateText();
-    updateButtons();
-    if (upgradeA === 1) {
-      startTime = performance.now();
-      requestAnimationFrame(frameUpdate);
-    }
-  }
-});
-
-upgradeButtonB.addEventListener("click", () => {
-  if (counter >= priceB) {
-    counter = updateCounter(counter, -100, playerCount);
-    upgradeB++;
-    priceB = updatePrice(priceB);
-    updateText();
-    updateButtons();
-    if (upgradeB === 1) {
-      startTime = performance.now();
-      requestAnimationFrame(frameUpdate);
-    }
-  }
-});
-
-upgradeButtonC.addEventListener("click", () => {
-  if (counter >= priceC) {
-    counter = updateCounter(counter, -1000, playerCount);
-    upgradeC++;
-    priceC = updatePrice(priceC);
-    updateText();
-    updateButtons();
-    if (upgradeC === 1) {
-      startTime = performance.now();
-      requestAnimationFrame(frameUpdate);
-    }
-  }
-});
-
 requestAnimationFrame(frameUpdate);
+
