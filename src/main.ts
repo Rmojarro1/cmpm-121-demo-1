@@ -12,45 +12,49 @@ app.append(header);
 
 const button: HTMLButtonElement = document.createElement("button");
 button.textContent = "🍆";
-document.body.appendChild(button);
+app.appendChild(button); 
+//document.body.appendChild(button);
 
 const upgradeButtonA: HTMLButtonElement = document.createElement("button");
 upgradeButtonA.textContent = "UpgradeA = 10 🍆 ";
 upgradeButtonA.disabled = true;
-document.body.appendChild(upgradeButtonA);
+app.appendChild(upgradeButtonA);
 
 const upgradeButtonB: HTMLButtonElement = document.createElement("button");
 upgradeButtonB.textContent = "UpgradeB = 100 🍆 ";
 upgradeButtonB.disabled = true;
-document.body.appendChild(upgradeButtonB);
+app.appendChild(upgradeButtonB);
 
 const upgradeButtonC: HTMLButtonElement = document.createElement("button");
 upgradeButtonC.textContent = "UpgradeC = 1000 🍆 ";
 upgradeButtonC.disabled = true;
-document.body.appendChild(upgradeButtonC);
+app.appendChild(upgradeButtonC);
 
-
-
-let buttonCounter: number = 0;
+let buttonCounter: number = 1000;
 let upgradeA: number = 0;
-let upgradeB: number = 0; 
+let upgradeB: number = 0;
 let upgradeC: number = 0;
 
-const growthRate = document.createElement('gr'); 
-growthRate.textContent = ("Current growth rate: " + ((0.1 * upgradeA) + (2 * upgradeB))); 
-document.body.appendChild(growthRate); 
+let priceA = 10; 
+let priceB = 100; 
+let priceC = 1000; 
 
-const upgradeAText = document.createElement('upA'); 
-upgradeAText.textContent = ("UpgradeA: " + upgradeA); 
-document.body.appendChild(upgradeAText);  
+const growthRate = document.createElement("gr");
+growthRate.textContent =
+  "Current growth rate: " + (0.1 * upgradeA + 2 * upgradeB);
+app.appendChild(growthRate);
 
-const upgradeBText = document.createElement('upB'); 
-upgradeBText.textContent = ("UpgradeB: " + upgradeB); 
-document.body.appendChild(upgradeBText);  
+const upgradeAText = document.createElement("upA");
+upgradeAText.textContent = "UpgradeA: " + upgradeA;
+app.appendChild(upgradeAText);
 
-const upgradeCText = document.createElement('upC');
-upgradeCText.textContent = ("UpgradeC: " + upgradeC);
-document.body.appendChild(upgradeCText);
+const upgradeBText = document.createElement("upB");
+upgradeBText.textContent = "UpgradeB: " + upgradeB;
+app.appendChild(upgradeBText);
+
+const upgradeCText = document.createElement("upC");
+upgradeCText.textContent = "UpgradeC: " + upgradeC;
+app.appendChild(upgradeCText);
 
 function updateCounter(
   count: number,
@@ -59,35 +63,47 @@ function updateCounter(
 ): number {
   count += value;
   button.textContent = "🍆 clicked " + count.toFixed(2) + " times\n";
-  updateButtons(); 
+  updateButtons();
   return count;
 }
+
+function updatePrice(price: number): number {
+  return (price* 1.15); 
+}
+
+/*function updateUpgrade(upgrade: number, price: number): void {
+
+}*/
 
 function updateButtons(): void {
   upgradeButtonA.disabled = !hasUpgradeA(buttonCounter);
   upgradeButtonB.disabled = !hasUpgradeB(buttonCounter);
   upgradeButtonC.disabled = !hasUpgradeC(buttonCounter);
+  upgradeButtonA.textContent = "UpgradeA = " + (priceA).toFixed(2) + " 🍆 ";
+  upgradeButtonB.textContent = "UpgradeB = " + (priceB).toFixed(2) + " 🍆 ";
+  upgradeButtonC.textContent = "UpgradeC = " + (priceC).toFixed(2) + " 🍆 ";
 }
 
 function hasUpgradeA(count: number): boolean {
-  return count >= 10;
+  return count >= priceA;
 }
 
 function hasUpgradeB(count: number): boolean {
-  return count >= 100;
+  return count >= priceB;
 }
 
 function hasUpgradeC(count: number): boolean {
-  return count >= 1000;
+  return count >= priceC;
 }
 
-function updateText(): void{
-  growthRate.textContent = ("Current growth rate: " + ((0.1 * upgradeA) + (2 * upgradeB) + (50 * upgradeC)).toFixed(2));
-  upgradeAText.textContent = ("UpgradeA: " + upgradeA);
-  upgradeBText.textContent = ("UpgradeB: " + upgradeB);
-  upgradeCText.textContent = ("UpgradeC: " + upgradeC);
+function updateText(): void {
+  growthRate.textContent =
+    "Current growth rate: " +
+    (0.1 * upgradeA + 2 * upgradeB + 50 * upgradeC).toFixed(2);
+  upgradeAText.textContent = "UpgradeA: " + upgradeA;
+  upgradeBText.textContent = "UpgradeB: " + upgradeB;
+  upgradeCText.textContent = "UpgradeC: " + upgradeC;
 }
-
 
 let startTime: number = performance.now();
 
@@ -96,38 +112,39 @@ function frameUpdate(): void {
     const currentTime = performance.now();
     const elapsedTime = (currentTime - startTime) / 1000;
 
-    if(upgradeA > 0) {
+    if (upgradeA > 0) {
       const incrementA = upgradeA * 0.1 * elapsedTime;
       buttonCounter = updateCounter(buttonCounter, incrementA, button);
     }
 
-    if(upgradeB > 0) {
+    if (upgradeB > 0) {
       const incrementB = upgradeB * 2 * elapsedTime;
       buttonCounter = updateCounter(buttonCounter, incrementB, button);
     }
-    
-    if(upgradeC > 0) {
+
+    if (upgradeC > 0) {
       const incrementC = upgradeC * 50 * elapsedTime;
       buttonCounter = updateCounter(buttonCounter, incrementC, button);
     }
     console.log(buttonCounter);
     startTime = currentTime;
-    updateButtons(); 
+    updateButtons();
     requestAnimationFrame(frameUpdate);
   }
 }
 
 button.addEventListener("click", () => {
   buttonCounter = updateCounter(buttonCounter, 1, button);
-  updateButtons(); 
+  updateButtons();
 });
 
 upgradeButtonA.addEventListener("click", () => {
-  if (buttonCounter >= 10) {
+  if (buttonCounter >= priceA) {
     buttonCounter = updateCounter(buttonCounter, -10, button);
     upgradeA++;
-    updateText();  
-    updateButtons(); 
+    priceA = updatePrice(priceA); 
+    updateText();
+    updateButtons();
     if (upgradeA === 1) {
       startTime = performance.now();
       requestAnimationFrame(frameUpdate);
@@ -136,11 +153,12 @@ upgradeButtonA.addEventListener("click", () => {
 });
 
 upgradeButtonB.addEventListener("click", () => {
-  if (buttonCounter >= 100) {
+  if (buttonCounter >= priceB) {
     buttonCounter = updateCounter(buttonCounter, -100, button);
     upgradeB++;
-    updateText(); 
-    updateButtons(); 
+    priceB = updatePrice(priceB); 
+    updateText();
+    updateButtons();
     if (upgradeB === 1) {
       startTime = performance.now();
       requestAnimationFrame(frameUpdate);
@@ -149,9 +167,10 @@ upgradeButtonB.addEventListener("click", () => {
 });
 
 upgradeButtonC.addEventListener("click", () => {
-  if (buttonCounter >= 1000) {
+  if (buttonCounter >= priceC) {
     buttonCounter = updateCounter(buttonCounter, -1000, button);
     upgradeC++;
+    priceC = updatePrice(priceC); 
     updateText();
     updateButtons();
     if (upgradeC === 1) {
