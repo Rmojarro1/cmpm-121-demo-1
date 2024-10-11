@@ -16,17 +16,17 @@ app.appendChild(button);
 //document.body.appendChild(button);
 
 const upgradeButtonA: HTMLButtonElement = document.createElement("button");
-upgradeButtonA.textContent = "UpgradeA = 10 🍆 ";
+upgradeButtonA.textContent = "Part-timer = 10 🍆 ";
 upgradeButtonA.disabled = true;
 app.appendChild(upgradeButtonA);
 
 const upgradeButtonB: HTMLButtonElement = document.createElement("button");
-upgradeButtonB.textContent = "UpgradeB = 100 🍆 ";
+upgradeButtonB.textContent = "Friendly neighbor = 100 🍆 ";
 upgradeButtonB.disabled = true;
 app.appendChild(upgradeButtonB);
 
 const upgradeButtonC: HTMLButtonElement = document.createElement("button");
-upgradeButtonC.textContent = "UpgradeC = 1000 🍆 ";
+upgradeButtonC.textContent = "Full-time employee = 1000 🍆 ";
 upgradeButtonC.disabled = true;
 app.appendChild(upgradeButtonC);
 
@@ -39,26 +39,25 @@ let priceA = 10;
 let priceB = 100;
 let priceC = 1000;
 
-const playerCount = document.createElement("total"); 
-playerCount.textContent = ("You have " + counter+ "🍆s"); 
-document.body.appendChild(playerCount); 
-
+const playerCount = document.createElement("total");
+playerCount.textContent = "You have " + counter + "🍆s";
+document.body.appendChild(playerCount);
 
 const growthRate = document.createElement("gr");
 growthRate.textContent =
-  "Current growth rate: " + (0.1 * upgradeA + 2 * upgradeB);
+  "Current harvest rate: " + (0.1 * upgradeA + 2 * upgradeB);
 app.appendChild(growthRate);
 
 const upgradeAText = document.createElement("upA");
-upgradeAText.textContent = "UpgradeA: " + upgradeA;
+upgradeAText.textContent = "Part-timers: " + upgradeA;
 app.appendChild(upgradeAText);
 
 const upgradeBText = document.createElement("upB");
-upgradeBText.textContent = "UpgradeB: " + upgradeB;
+upgradeBText.textContent = "Friendly neighbors: " + upgradeB;
 app.appendChild(upgradeBText);
 
 const upgradeCText = document.createElement("upC");
-upgradeCText.textContent = "UpgradeC: " + upgradeC;
+upgradeCText.textContent = "Harvesting robots: " + upgradeC;
 app.appendChild(upgradeCText);
 
 function updateCounter(
@@ -67,7 +66,7 @@ function updateCounter(
   button: HTMLElement,
 ): number {
   count += value;
-  button.textContent = "You have " + count.toFixed(2) + "🍆s ";
+  button.textContent = count.toFixed(2) + "🍆s harvested";
   updateButtons();
   return count;
 }
@@ -84,9 +83,9 @@ function updateButtons(): void {
   upgradeButtonA.disabled = !hasUpgradeA(counter);
   upgradeButtonB.disabled = !hasUpgradeB(counter);
   upgradeButtonC.disabled = !hasUpgradeC(counter);
-  upgradeButtonA.textContent = "UpgradeA = " + priceA.toFixed(2) + " 🍆 ";
-  upgradeButtonB.textContent = "UpgradeB = " + priceB.toFixed(2) + " 🍆 ";
-  upgradeButtonC.textContent = "UpgradeC = " + priceC.toFixed(2) + " 🍆 ";
+  upgradeButtonA.textContent = "Part-timer = " + priceA.toFixed(2) + " 🍆 ";
+  upgradeButtonB.textContent = "Friendly neighbors = " + priceB.toFixed(2) + " 🍆 ";
+  upgradeButtonC.textContent = "Harvesting robots = " + priceC.toFixed(2) + " 🍆 ";
 }
 
 function hasUpgradeA(count: number): boolean {
@@ -103,11 +102,11 @@ function hasUpgradeC(count: number): boolean {
 
 function updateText(): void {
   growthRate.textContent =
-    "Current growth rate: " +
+    "Current harvest rate: " +
     (0.1 * upgradeA + 2 * upgradeB + 50 * upgradeC).toFixed(2);
-  upgradeAText.textContent = "UpgradeA: " + upgradeA;
-  upgradeBText.textContent = "UpgradeB: " + upgradeB;
-  upgradeCText.textContent = "UpgradeC: " + upgradeC;
+  upgradeAText.textContent = "Part-timers: " + upgradeA;
+  upgradeBText.textContent = "Friendly neighbors: " + upgradeB;
+  upgradeCText.textContent = "Harvesting robots: " + upgradeC;
 }
 
 let startTime: number = performance.now();
