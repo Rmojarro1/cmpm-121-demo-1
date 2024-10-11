@@ -12,7 +12,7 @@ app.append(header);
 
 const button: HTMLButtonElement = document.createElement("button");
 button.textContent = "🍆";
-app.appendChild(button); 
+app.appendChild(button);
 //document.body.appendChild(button);
 
 const upgradeButtonA: HTMLButtonElement = document.createElement("button");
@@ -30,14 +30,19 @@ upgradeButtonC.textContent = "UpgradeC = 1000 🍆 ";
 upgradeButtonC.disabled = true;
 app.appendChild(upgradeButtonC);
 
-let buttonCounter: number = 1000;
+let counter: number = 0;
 let upgradeA: number = 0;
 let upgradeB: number = 0;
 let upgradeC: number = 0;
 
-let priceA = 10; 
-let priceB = 100; 
-let priceC = 1000; 
+let priceA = 10;
+let priceB = 100;
+let priceC = 1000;
+
+const playerCount = document.createElement("total"); 
+playerCount.textContent = ("You have " + counter+ "🍆s"); 
+document.body.appendChild(playerCount); 
+
 
 const growthRate = document.createElement("gr");
 growthRate.textContent =
@@ -59,16 +64,16 @@ app.appendChild(upgradeCText);
 function updateCounter(
   count: number,
   value: number,
-  button: HTMLButtonElement,
+  button: HTMLElement,
 ): number {
   count += value;
-  button.textContent = "🍆 clicked " + count.toFixed(2) + " times\n";
+  button.textContent = "You have " + count.toFixed(2) + "🍆s ";
   updateButtons();
   return count;
 }
 
 function updatePrice(price: number): number {
-  return (price* 1.15); 
+  return price * 1.15;
 }
 
 /*function updateUpgrade(upgrade: number, price: number): void {
@@ -76,12 +81,12 @@ function updatePrice(price: number): number {
 }*/
 
 function updateButtons(): void {
-  upgradeButtonA.disabled = !hasUpgradeA(buttonCounter);
-  upgradeButtonB.disabled = !hasUpgradeB(buttonCounter);
-  upgradeButtonC.disabled = !hasUpgradeC(buttonCounter);
-  upgradeButtonA.textContent = "UpgradeA = " + (priceA).toFixed(2) + " 🍆 ";
-  upgradeButtonB.textContent = "UpgradeB = " + (priceB).toFixed(2) + " 🍆 ";
-  upgradeButtonC.textContent = "UpgradeC = " + (priceC).toFixed(2) + " 🍆 ";
+  upgradeButtonA.disabled = !hasUpgradeA(counter);
+  upgradeButtonB.disabled = !hasUpgradeB(counter);
+  upgradeButtonC.disabled = !hasUpgradeC(counter);
+  upgradeButtonA.textContent = "UpgradeA = " + priceA.toFixed(2) + " 🍆 ";
+  upgradeButtonB.textContent = "UpgradeB = " + priceB.toFixed(2) + " 🍆 ";
+  upgradeButtonC.textContent = "UpgradeC = " + priceC.toFixed(2) + " 🍆 ";
 }
 
 function hasUpgradeA(count: number): boolean {
@@ -114,19 +119,19 @@ function frameUpdate(): void {
 
     if (upgradeA > 0) {
       const incrementA = upgradeA * 0.1 * elapsedTime;
-      buttonCounter = updateCounter(buttonCounter, incrementA, button);
+      counter = updateCounter(counter, incrementA, playerCount);
     }
 
     if (upgradeB > 0) {
       const incrementB = upgradeB * 2 * elapsedTime;
-      buttonCounter = updateCounter(buttonCounter, incrementB, button);
+      counter = updateCounter(counter, incrementB, playerCount);
     }
 
     if (upgradeC > 0) {
       const incrementC = upgradeC * 50 * elapsedTime;
-      buttonCounter = updateCounter(buttonCounter, incrementC, button);
+      counter = updateCounter(counter, incrementC, playerCount);
     }
-    console.log(buttonCounter);
+    console.log(counter);
     startTime = currentTime;
     updateButtons();
     requestAnimationFrame(frameUpdate);
@@ -134,15 +139,15 @@ function frameUpdate(): void {
 }
 
 button.addEventListener("click", () => {
-  buttonCounter = updateCounter(buttonCounter, 1, button);
+  counter = updateCounter(counter, 1, playerCount);
   updateButtons();
 });
 
 upgradeButtonA.addEventListener("click", () => {
-  if (buttonCounter >= priceA) {
-    buttonCounter = updateCounter(buttonCounter, -10, button);
+  if (counter >= priceA) {
+    counter = updateCounter(counter, -10, playerCount);
     upgradeA++;
-    priceA = updatePrice(priceA); 
+    priceA = updatePrice(priceA);
     updateText();
     updateButtons();
     if (upgradeA === 1) {
@@ -153,10 +158,10 @@ upgradeButtonA.addEventListener("click", () => {
 });
 
 upgradeButtonB.addEventListener("click", () => {
-  if (buttonCounter >= priceB) {
-    buttonCounter = updateCounter(buttonCounter, -100, button);
+  if (counter >= priceB) {
+    counter = updateCounter(counter, -100, playerCount);
     upgradeB++;
-    priceB = updatePrice(priceB); 
+    priceB = updatePrice(priceB);
     updateText();
     updateButtons();
     if (upgradeB === 1) {
@@ -167,10 +172,10 @@ upgradeButtonB.addEventListener("click", () => {
 });
 
 upgradeButtonC.addEventListener("click", () => {
-  if (buttonCounter >= priceC) {
-    buttonCounter = updateCounter(buttonCounter, -1000, button);
+  if (counter >= priceC) {
+    counter = updateCounter(counter, -1000, playerCount);
     upgradeC++;
-    priceC = updatePrice(priceC); 
+    priceC = updatePrice(priceC);
     updateText();
     updateButtons();
     if (upgradeC === 1) {
