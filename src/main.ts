@@ -1,11 +1,14 @@
 const app: HTMLDivElement = document.querySelector("#app")!;
 
-const gameName = "Raul's Game";
+const gameName = "Eggplant Harvest";
 
 document.title = gameName;
+document.body.style.backgroundColor = "purple";
 
 const header = document.createElement("h1");
 header.innerHTML = gameName;
+header.style.textAlign = "center"; 
+header.style.margin = "20px 0"; 
 app.append(header);
 
 interface Item {
@@ -55,14 +58,6 @@ const upgrades: number[] = Array(availableItems.length).fill(0);
 const prices: number[] = availableItems.map((item) => item.cost);
 let startTime: number = performance.now();
 
-const playerCount = document.createElement("div");
-playerCount.textContent = `${counter} 🍆s harvested`;
-document.body.appendChild(playerCount);
-
-const growthRate = document.createElement("div");
-growthRate.textContent = "Current harvest rate: 0";
-app.appendChild(growthRate);
-
 function createButton(
   text: string,
   description: string,
@@ -79,32 +74,55 @@ function createButton(
   return button;
 }
 
-availableItems.forEach((item, index) => {
-  createButton(
-    `${item.name} = ${item.cost} 🍆`,
-    item.description,
-    true,
-    app,
-    () => handlePurchaseButtonClick(index),
-  );
-});
+const mainButtonContainer = document.createElement("div");
+app.appendChild(mainButtonContainer);
+const mainButton = createButton("🍆", "", false, mainButtonContainer, handleMainButtonClick);
+mainButtonContainer.style.textAlign = "center";
+mainButton.style.fontSize = "2em"; 
+mainButton.style.padding = "15px 30px"; 
+mainButton.style.border = "3px solid #006400"; 
+mainButton.style.backgroundColor = "#c8a2c8";
+mainButton.style.borderRadius = "15px";
 
-createButton("🍆", "", false, app, handleMainButtonClick);
+const playerInfoContainer = document.createElement("div");
+app.appendChild(playerInfoContainer);
+playerInfoContainer.style.textAlign = "center";
+const playerCount = document.createElement("p");
+playerCount.textContent = `${counter} 🍆s harvested`;
+playerInfoContainer.appendChild(playerCount);
+
+const growthRate = document.createElement("p");
+growthRate.textContent = "Current harvest rate: 0";
+playerInfoContainer.appendChild(growthRate);
+
+const upgradeContainer = document.createElement("div");
+app.appendChild(upgradeContainer);
 
 const buttons: HTMLButtonElement[] = availableItems.map((item, index) =>
   createButton(
     `${item.name} = ${item.cost} 🍆`,
     item.description,
     true,
-    app,
+    upgradeContainer,
     () => handlePurchaseButtonClick(index),
   ),
 );
+upgradeContainer.style.textAlign = "center";
 
 function updateButtons(): void {
   buttons.forEach((button, index) => {
     button.disabled = counter < prices[index];
-    button.textContent = `${availableItems[index].name} = ${prices[index].toFixed(2)} 🍆`;
+    let buttonText = `${availableItems[index].name}`;
+    if (upgrades[index] > 0) {
+      buttonText += `(${upgrades[index]})`;
+    }
+    const priceText = Number.isInteger(prices[index])
+      ? prices[index].toString()
+      : prices[index].toFixed(2);
+
+    buttonText += ` = ${priceText} 🍆`;
+
+    button.textContent = buttonText;
   });
 }
 
@@ -133,7 +151,10 @@ function updateCounter(
   playerCount: HTMLElement,
 ): number {
   counter += value;
-  playerCount.textContent = `You have ${counter.toFixed(2)} 🍆s`;
+  const counterText = Number.isInteger(counter)
+      ? counter.toString()
+      : counter.toFixed(2);
+  playerCount.textContent = `You have ${counterText} 🍆s`;
   return counter;
 }
 
@@ -168,11 +189,10 @@ function performFrameUpdate(): void {
   if (upgrades.some((upgrade) => upgrade > 0)) {
     const elapsedTime = calculateElapsedTime(startTime);
     updateCounterForUpgrades(elapsedTime);
-    startTime = performance.now(); // Refresh the start time
+    startTime = performance.now(); 
     requestAnimationFrame(performFrameUpdate);
     updateButtons();
   }
 }
 
-// Initiate the frame update process
 requestAnimationFrame(performFrameUpdate);
