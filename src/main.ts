@@ -7,8 +7,8 @@ document.body.style.backgroundColor = "purple";
 
 const header = document.createElement("h1");
 header.innerHTML = gameName;
-header.style.textAlign = "center"; 
-header.style.margin = "20px 0"; 
+header.style.textAlign = "center";
+header.style.margin = "20px 0";
 app.append(header);
 
 interface Item {
@@ -76,11 +76,17 @@ function createButton(
 
 const mainButtonContainer = document.createElement("div");
 app.appendChild(mainButtonContainer);
-const mainButton = createButton("🍆", "", false, mainButtonContainer, handleMainButtonClick);
+const mainButton = createButton(
+  "🍆",
+  "",
+  false,
+  mainButtonContainer,
+  handleMainButtonClick,
+);
 mainButtonContainer.style.textAlign = "center";
-mainButton.style.fontSize = "2em"; 
-mainButton.style.padding = "15px 30px"; 
-mainButton.style.border = "3px solid #006400"; 
+mainButton.style.fontSize = "2em";
+mainButton.style.padding = "15px 30px";
+mainButton.style.border = "3px solid #006400";
 mainButton.style.backgroundColor = "#c8a2c8";
 mainButton.style.borderRadius = "15px";
 
@@ -152,8 +158,8 @@ function updateCounter(
 ): number {
   counter += value;
   const counterText = Number.isInteger(counter)
-      ? counter.toString()
-      : counter.toFixed(2);
+    ? counter.toString()
+    : counter.toFixed(2);
   playerCount.textContent = `You have ${counterText} 🍆s`;
   return counter;
 }
@@ -189,7 +195,7 @@ function performFrameUpdate(): void {
   if (upgrades.some((upgrade) => upgrade > 0)) {
     const elapsedTime = calculateElapsedTime(startTime);
     updateCounterForUpgrades(elapsedTime);
-    startTime = performance.now(); 
+    startTime = performance.now();
     requestAnimationFrame(performFrameUpdate);
     updateButtons();
   }
