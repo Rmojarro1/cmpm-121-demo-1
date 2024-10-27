@@ -68,7 +68,7 @@ function createButton(
   description: string,
   disabled: boolean,
   parent: HTMLElement,
-  clickHandler: () => void
+  clickHandler: () => void,
 ): HTMLButtonElement {
   const button = document.createElement("button");
   button.textContent = text;
@@ -85,7 +85,7 @@ availableItems.forEach((item, index) => {
     item.description,
     true,
     app,
-    () => handlePurchaseButtonClick(index)
+    () => handlePurchaseButtonClick(index),
   );
 });
 
@@ -97,8 +97,8 @@ const buttons: HTMLButtonElement[] = availableItems.map((item, index) =>
     item.description,
     true,
     app,
-    () => handlePurchaseButtonClick(index)
-  )
+    () => handlePurchaseButtonClick(index),
+  ),
 );
 
 function updateButtons(): void {
@@ -130,7 +130,7 @@ function handleMainButtonClick(): void {
 function updateCounter(
   counter: number,
   value: number,
-  playerCount: HTMLElement
+  playerCount: HTMLElement,
 ): number {
   counter += value;
   playerCount.textContent = `You have ${counter.toFixed(2)} 🍆s`;
@@ -145,7 +145,7 @@ function updateText(): void {
   const totalRate = upgrades.reduce(
     (sum, upgradeCount, index) =>
       sum + upgradeCount * availableItems[index].rate,
-    0
+    0,
   );
   growthRate.textContent = `Current harvest rate: ${totalRate.toFixed(2)}`;
 }
@@ -158,8 +158,7 @@ function calculateElapsedTime(startTime: number): number {
 function updateCounterForUpgrades(elapsedTime: number): void {
   upgrades.forEach((upgradeCount, index) => {
     if (upgradeCount > 0) {
-      const increment =
-        upgradeCount * availableItems[index].rate * elapsedTime;
+      const increment = upgradeCount * availableItems[index].rate * elapsedTime;
       counter = updateCounter(counter, increment, playerCount);
     }
   });
